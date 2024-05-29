@@ -1,6 +1,7 @@
 package com.works.restcontrollers;
 
 import com.works.entities.Product;
+import com.works.models.AllPost;
 import com.works.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,11 @@ public class ProductRestController {
     @GetMapping("list")
     public ResponseEntity list() {
         return productService.allProduct();
+    }
+
+    @GetMapping("allpost")
+    public AllPost allPost() {
+        return productService.allPost();
     }
 
 }

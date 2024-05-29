@@ -1,13 +1,14 @@
 package com.works.restcontrollers;
 
 import com.works.entities.Customer;
+import com.works.models.Currency;
 import com.works.services.CustomerService;
+import com.works.xxe.XmlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +20,17 @@ public class CustomerRestController {
     @PostMapping("register")
     public ResponseEntity register(@RequestBody Customer customer){
         return customerService.register(customer);
+    }
+
+    @PostMapping("login")
+    public ResponseEntity login(@RequestBody Customer customer){
+        return customerService.login(customer);
+    }
+
+    @GetMapping("xml")
+    public List<Currency> getCurrency(){
+        XmlService xmlService = new XmlService();
+        return xmlService.xml();
     }
 
 }

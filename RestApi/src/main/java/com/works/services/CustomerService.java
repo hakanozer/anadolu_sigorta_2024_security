@@ -14,7 +14,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,10 +25,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CustomerService implements UserDetailsService {
 
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DB db;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -64,6 +69,25 @@ public class CustomerService implements UserDetailsService {
         }
     }
 
+
+    public ResponseEntity login(Customer customer) {
+        try {
+            //String sql = "select * from customer where email = '"+ customer.getEmail() +"' and password = '"+ customer.getPassword() +"'";
+            //System.out.println(sql);
+            // select * from customer where email = 'a@mail.com' and password = '' or 1 = 1 --'
+            String sql = "select * from customer where email = ? and password = ?";
+            PreparedStatement pre = db.dataSource().getConnection().prepareStatement(sql);
+            pre.setString(1, customer.getEmail());
+            pre.setString(2, customer.getPassword());
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                return new ResponseEntity("Login Success", HttpStatus.OK);
+            }
+        }catch (Exception ex) {
+            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity("Username or Password", HttpStatus.BAD_REQUEST);
+    }
 
 
 }
